@@ -1,0 +1,212 @@
+.contact {
+  background: var(--warm-grey);
+}
+
+.contact__inner {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 5rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.contact__heading {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  color: var(--ink-dark);
+  margin-bottom: 1rem;
+}
+.contact__heading em { color: var(--gold); }
+
+.contact__intro {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+/* Contact items (address, phone, email) */
+.contact__items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.contact__item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.contact__item-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--ink-dark);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.contact__item-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.contact__item-value {
+  color: var(--ink-dark);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.contact__item-value--link {
+  transition: color var(--transition);
+}
+.contact__item-value--link:hover { color: var(--gold); }
+
+/* Trading hours */
+.contact__hours {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.contact__hours-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.contact__hours-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.contact__hours-row td {
+  padding: 0.35rem 0;
+  font-size: 0.875rem;
+  color: var(--text);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.contact__hours-row:last-child td {
+  border-bottom: none;
+}
+
+.contact__hours-day {
+  width: 110px;
+  color: var(--muted);
+}
+
+.contact__hours-time {
+  font-weight: 400;
+}
+
+.contact__hours-badge {
+  text-align: right;
+  padding-right: 0 !important;
+}
+
+.contact__hours-badge::after {
+  content: 'Today';
+  background: var(--gold);
+  color: var(--ink-dark);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+}
+
+/* Highlight today's row */
+.contact__hours-row--today td {
+  color: var(--ink-dark);
+  font-weight: 500;
+}
+
+.contact__hours-row--today .contact__hours-day {
+  color: var(--ink-dark);
+}
+
+/* Call CTA */
+.contact__call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--ink-dark);
+  color: var(--white);
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background var(--transition), transform var(--transition);
+}
+.contact__call-btn:hover {
+  background: var(--gold);
+  color: var(--ink-dark);
+  transform: translateY(-2px);
+}
+
+/* ---- Map ---- */
+.contact__map-wrap {
+  position: sticky;
+  top: 90px;
+}
+
+.contact__map-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0,0,0,0.08);
+  aspect-ratio: 4 / 3.5;
+  background: var(--warm-grey);
+}
+
+.contact__map-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.contact__map-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.25rem 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contact__map-footer a {
+  color: var(--gold);
+  font-weight: 500;
+  transition: opacity var(--transition);
+}
+.contact__map-footer a:hover { opacity: 0.75; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contact__inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .contact__map-wrap {
+    position: static;
+  }
+}

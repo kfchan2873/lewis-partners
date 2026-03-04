@@ -1,0 +1,117 @@
+.services {
+  background: var(--cream);
+}
+
+.services__header {
+  text-align: center;
+  margin-bottom: 4rem;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.services__heading {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: var(--ink-dark);
+  margin-bottom: 1rem;
+}
+
+.services__heading em {
+  color: var(--gold);
+}
+
+.services__purpose {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Service card */
+.service-card {
+  background: var(--white);
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius);
+  border-top: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform var(--transition), box-shadow var(--transition), border-top-color var(--transition);
+}
+
+.service-card--hovered {
+  border-top-color: var(--gold);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+}
+
+.service-card__icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+  transition: transform var(--transition);
+}
+
+.service-card--hovered .service-card__icon {
+  transform: scale(1.15);
+}
+
+.service-card__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink-dark);
+  margin-bottom: 0.75rem;
+}
+
+.service-card__desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.service-card__arrow {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  color: var(--gold);
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.service-card--hovered .service-card__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Motto */
+.services__motto {
+  max-width: 700px;
+  margin: 3.5rem auto 0;
+  padding: 2rem 2.5rem;
+  background: var(--ink-dark);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.services__motto-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+
+.services__motto-attr {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

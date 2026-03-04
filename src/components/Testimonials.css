@@ -1,0 +1,110 @@
+.testimonials {
+  background: var(--cream);
+}
+
+.testimonials__header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.testimonials__heading {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: var(--ink-dark);
+}
+
+.testimonials__heading em {
+  color: var(--gold);
+}
+
+.testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  border-left: 4px solid var(--gold);
+  position: relative;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.testimonial-card__quote {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  color: var(--gold);
+  opacity: 0.12;
+  position: absolute;
+  top: 0.5rem;
+  left: 1.5rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.stars {
+  color: var(--gold);
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.75rem;
+}
+
+.testimonial-card__text {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  line-height: 1.75;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-card__author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.testimonial-card__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--warm-grey);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--ink-dark);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.testimonial-card__name {
+  font-weight: 500;
+  color: var(--ink-dark);
+  font-size: 0.9rem;
+}
+
+.testimonial-card__role {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.testimonials__cta {
+  text-align: center;
+  margin-top: 3.5rem;
+}
+
+.testimonials__cta p {
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+}

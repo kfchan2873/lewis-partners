@@ -1,0 +1,33 @@
+.admin-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 150;
+  background: #2a5298;
+  color: rgba(255,255,255,0.9);
+  padding: 0 5%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.admin-bar + * .navbar {
+  top: 38px;
+}
+
+.admin-bar__exit {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--white);
+  padding: 0.2rem 0.8rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.2s;
+}
+.admin-bar__exit:hover { background: rgba(255,255,255,0.25); }

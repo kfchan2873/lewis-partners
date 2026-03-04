@@ -1,0 +1,114 @@
+/* ============================================================
+   LEWIS PARTNERS — GLOBAL STYLES
+   Design direction: Refined & authoritative — deep navy with
+   gold accents. Playfair Display for gravitas, DM Sans for clarity.
+   ============================================================ */
+
+:root {
+  --ink:        #3344a5;
+  --ink-dark:   #444eb6;
+  --gold:       #c9a84c;
+  --gold-light: #e8c97a;
+  --cream:      #faf8f3;
+  --warm-grey:  #f0ece3;
+  --text:       #3d3d4e;
+  --muted:      #8a8a9a;
+  --white:      #ffffff;
+  --border:     rgba(201,168,76,0.2);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  --transition: 0.25s ease;
+  --radius:     4px;
+  --shadow:     0 12px 40px rgba(0,0,0,0.10);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+/* Utility classes */
+.section-tag {
+  display: block;
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--ink-dark);
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background var(--transition), transform var(--transition);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  display: inline-block;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color var(--transition), color var(--transition);
+  background: transparent;
+}
+.btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Scroll fade-up animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.fade-up {
+  animation-duration: 0.6s;
+}
+/* Section padding */
+.section {
+  padding: 100px 5%;
+}
+
+@media (max-width: 768px) {
+  .section { padding: 70px 5%; }
+}
