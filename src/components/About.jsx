@@ -31,7 +31,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* Floating Deakin card */}
+          {/* Floating Deakin card
           <div className="about__credential-card about__credential-card--bottom">
             <span className="about__credential-icon about__credential-icon--blue">🎓</span>
             <div>
@@ -39,6 +39,7 @@ export default function About() {
               <div className="about__credential-sub">Graduate</div>
             </div>
           </div>
+          */}
         </div>
 
         {/* Text column */}

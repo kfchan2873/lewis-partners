@@ -161,7 +161,18 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   ("Useful Links"), then the `Get in Touch` CTA button (visually distinct — extra margin
   before it, not just another link in the row).
 - Active link highlighted by comparing `window.scrollY` to section offsets.
-- Mobile hamburger menu (hidden on desktop via CSS).
+- **Mobile hamburger breakpoint is `1200px`**, not a more typical `768px`. This was raised
+  deliberately: at the original 768px cutoff, the full nav row (logo + links + "Useful
+  Links" dropdown + CTA) had no room to breathe between roughly 900–1150px, and both the
+  logo and the dropdown's "Useful Links" label would wrap to two lines there. This was
+  verified by measuring `.navbar__logo` and `.nav-dropdown__trigger` element heights across
+  that range (double-height = wrapped) rather than guessed — the row genuinely doesn't fit
+  on one line below ~1150–1200px, so the hamburger now takes over before that zone is ever
+  reached instead of patching individual elements with `white-space: nowrap`.
+- The `Get in Touch` CTA has `white-space: nowrap` as a belt-and-braces safety net (so it
+  never wraps mid-transition even if the row is ever squeezed again), and the same CTA is
+  duplicated — properly styled as a button, not a plain link — inside the mobile hamburger
+  panel (`.navbar__mobile-menu a.navbar__cta`), so it's still reachable below 1200px.
 - **No admin toggle** — the old ⚙ gear icon that toggled an in-page admin overlay has been
   removed entirely; admin access is now only via the `/admin` route (§6).
 
@@ -196,11 +207,26 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 - `useScrollReveal` applied per-card with staggered delay.
 
 ### About
-- Two floating credential cards: IPA (gold) + Deakin University (blue).
-- `about__img-placeholder` shows "KL" initials + a "Photo to be supplied" hint (its own,
-  separate placeholder from the Hero one — not yet reworded, since the hint text already
-  makes it unambiguous as a placeholder). Replace with `<img src="/kenneth-lewis.jpg" />`
-  once photo is supplied — same target path Hero.jsx's TODO comment expects.
+- **One floating credential card** (IPA, gold) — the second "Deakin University" card is
+  commented out in `About.jsx` (not deleted), so it can be restored later by uncommenting.
+  It was removed because with both cards present, the layout only had room for one at
+  narrower widths without them colliding.
+- The IPA card's position is adjusted specifically inside the `@media (max-width: 900px)`
+  block in `About.css` (`top: 0.5rem`, vs. the desktop default `top: 2rem`) — this exists
+  purely to add breathing room between the card and the "Photo to be supplied" hint text
+  below it, which was measured to sit only ~23px away at that breakpoint (now ~47px).
+- **The card intentionally overlaps the photo placeholder area** — it always has, at every
+  width, including full desktop. The large low-opacity "KL" watermark
+  (`.about__img-initials`, `rgba(201,168,76,0.25)`) is a decorative background mark that
+  the white card is deliberately layered on top of (`z-index: 2`). Don't mistake this for a
+  bug to "fix" by eliminating the overlap entirely — the `top: 0.5rem` adjustment above
+  only fixes the card crowding the *hint text line*, not the (intended) overlap with the
+  watermark itself.
+- `about__img-placeholder` shows the "KL" watermark + a "Photo to be supplied" hint (its
+  own, separate placeholder from the Hero one — not yet reworded, since the hint text
+  already makes it unambiguous as a placeholder). Replace with
+  `<img src="/kenneth-lewis.jpg" />` once photo is supplied — same target path Hero.jsx's
+  TODO comment expects.
 - LinkedIn button (real URL now in `siteData.js`) styled to match LinkedIn brand colour
   (#0077b5).
 - Credentials line: `about.credentials` is an **array** of three strings — always render
@@ -218,6 +244,8 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 - Controlled form via `useState(INITIAL_FORM)`.
 - Client-side validation in `validate()` function — returns error object.
 - Errors clear on field change; character counter on message textarea.
+- Message textarea is `min-height: 220px` / `rows={8}` (was `120px` / `rows={5}`), to fill
+  the vertical space in the form card rather than sitting small with unused room below it.
 - **Real send via EmailJS** (`@emailjs/browser`) — see §8 for the full integration
   details, required env vars, and template parameter names. No longer a simulated
   `setTimeout`.
@@ -225,6 +253,16 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   fallback) instead of always showing success — form data is preserved so the user can
   retry.
 - Enquiry types pulled from the `enquiryTypes` export in `siteData.js`.
+- **Past bug, now fixed:** `Feedback.css` had its base `.form__input, .form__select,
+  .form__textarea` rule (including `width: 100%`) commented out, with an unrelated
+  light-theme duplicate ruleset further down the file silently taking over instead — no
+  width, wrong border colour, no background/text colour, wrong (blue, not gold) focus
+  glow. Every field in the form rendered at browser-default intrinsic width (roughly half
+  its grid column) rather than filling it, which is what actually caused the "unused
+  space" the textarea sizing request above was about — not the textarea specifically.
+  Fixed by restoring the commented-out base rule and deleting the conflicting duplicate.
+  **If form fields ever look narrow/unstyled again, check for a duplicate
+  `.form__input`-family ruleset before assuming it's a new bug.**
 
 ### Contact
 - `contactItems` array built from `firm` data, including the now-object `firm.address`.
