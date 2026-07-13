@@ -50,9 +50,9 @@ lewis-partners/
 ├── CLAUDE.md                        ← You are here
 ├── README.md                        ← Developer quick-start
 ├── index.html                       ← HTML shell / entry point
-├── vite.config.js                   ← Vite config (React plugin, base path)
-├── vercel.json                      ← Vercel SPA rewrite (all paths → index.html)
-├── package.json                     ← Dependencies + postbuild GH Pages 404 step
+├── vite.config.js                   ← Vite config (React plugin, mode-dependent base path — see §12)
+├── vercel.json                      ← Vercel SPA rewrite (app routes only, not static assets — see §12)
+├── package.json                     ← Dependencies + build:ghpages/postbuild:ghpages steps
 ├── .env                             ← Local secrets (gitignored) — see §6/§8
 ├── .env.example                     ← Committed template, values intentionally blank
 │
@@ -505,30 +505,73 @@ that must never appear in plain text anywhere in the repo.
 The `dist/` folder after `npm run build` contains static files only. Rewrite/fallback
 config for client-side routing (`/admin`) is already in place for all four options below.
 
+### `base` path is mode-dependent — this matters, read before deploying anywhere
+`vite.config.js`'s `base` is **`/` by default**, correct for Vercel, Netlify, and Crazy
+Domains — all three serve this site from the domain root. GitHub Pages project sites are
+the one exception: they're served from a `/<repo-name>/` subpath
+(`https://<user>.github.io/lewis-partners/`), so a separate `npm run build:ghpages`
+(`vite build --mode ghpages`) builds with `base: '/lewis-partners/'` instead. `predeploy`
+already calls `build:ghpages`, so `npm run deploy` (Option A below) does the right thing
+automatically — but **`npm run build` alone always produces the root-relative build**,
+which is what Vercel/Netlify/Crazy Domains all need.
+
+This used to be hardcoded to `/lewis-partners/` unconditionally, which would have broken
+Vercel (and Netlify, and Crazy Domains) outright — every asset reference and the
+`BrowserRouter`'s `basename` would have pointed at a `/lewis-partners/` subpath that
+doesn't exist on any of those three hosts, producing a blank page with every asset 404ing.
+Caught and fixed before the first Vercel deploy. Verified both build outputs directly
+(inspected the emitted `<script>`/`<link>` tags in `dist/index.html` for each mode) rather
+than assuming the config change worked.
+
+The GitHub-Pages-only `postbuild:ghpages` step (copies `dist/index.html` → `dist/404.html`,
+GH Pages' fallback trick since it has no server-side rewrite support) is wired to
+`build:ghpages` specifically, not to the plain `build` script — npm's `pre`/`post` script
+hooks only fire for an exact name match, so renaming the GH Pages build step without also
+renaming its `postbuild` hook would have silently stopped the 404.html copy from running.
+
+Two places read `import.meta.env.BASE_URL` at runtime and adapt automatically to whichever
+mode built them — no per-host changes needed to either: the "Useful Links" logo `<img>` src
+in `NavDropdown.jsx`/`Footer.jsx`, and `App.jsx`'s `<BrowserRouter basename={...}>`. The
+Kenneth-photo `<img>` TODO comments in `Hero.jsx`/`About.jsx` were updated to use the same
+`${import.meta.env.BASE_URL}kenneth-lewis.jpg` pattern (they previously hardcoded
+`/kenneth-lewis.jpg`, which — though only a comment with no runtime effect yet — would have
+been wrong for the GitHub Pages build the moment someone implemented it).
+
 **Option A — GitHub Pages:**
 ```bash
-npm run deploy   # runs predeploy (build) then gh-pages -d dist
+npm run deploy   # runs predeploy (build:ghpages) then gh-pages -d dist
 ```
-`vite.config.js`'s `base: '/lewis-partners/'` and `package.json`'s `homepage` field are
-already set for this. The `postbuild` script's `dist/index.html` → `dist/404.html` copy is
-what makes a hard-refreshed `/admin` URL work here, since GitHub Pages has no server-side
-rewrite support at all.
+`package.json`'s `homepage` field is already set for this.
 
 **Option B — Vercel:**
 ```bash
 npm i -g vercel
 vercel deploy
 ```
-`vercel.json` at the project root already rewrites all paths to `index.html`.
+Uses the plain `npm run build` (root-relative `base: '/'`). `vercel.json`'s rewrite is
+`/((?!.*\.[a-zA-Z0-9]+$).*)` → `/index.html`, **not** a bare `/(.*)` catch-all. A catch-all
+rewrite matches asset requests too (`/assets/index-xxx.js`, logo `.svg` files, etc.), so a
+first Vercel deploy served `index.html` back for JS module requests — blank page, "Expected
+a JavaScript-or-Wasm module script but the server responded with a MIME type of
+'text/html'" in the console. The fix excludes any path ending in a file extension from the
+rewrite, so real static files are served as themselves and only actual app routes (`/`,
+`/admin`) fall through to `index.html`. Deliberately excludes by *file extension*, not by
+hardcoding `assets/` — a folder-name exclusion would still break the still-unimplemented
+Kenneth-photo path (`kenneth-lewis.jpg` lands at the `dist/` root, not under `assets/`,
+`logos/`, or any other excluded folder, the moment someone adds it). Verified with a
+regex test matrix against the actual `dist/` output and a local server that replicates
+Vercel's static-file-then-rewrite routing — real confirmation on Vercel's actual
+infrastructure after deploy is still the authoritative check, since Vercel's exact
+routing/caching internals can't be fully replicated locally.
 
 **Option C — Netlify:**
-Drag and drop the `dist/` folder at netlify.com/drop. `public/_redirects` (copied into
-`dist/` by Vite) handles the SPA fallback.
+Drag and drop the `dist/` folder (from a plain `npm run build`) at netlify.com/drop.
+`public/_redirects` (copied into `dist/` by Vite) handles the SPA fallback.
 
 **Option D — Crazy Domains (existing hosting):**
-Upload contents of `dist/` to `public_html/` via FTP. Point lewispartners.com.au DNS to
-hosting server. `public/.htaccess` (copied into `dist/`) handles the SPA fallback,
-assuming Apache + `mod_rewrite` on the hosting account.
+Upload contents of `dist/` (from a plain `npm run build`) to `public_html/` via FTP. Point
+lewispartners.com.au DNS to hosting server. `public/.htaccess` (copied into `dist/`)
+handles the SPA fallback, assuming Apache + `mod_rewrite` on the hosting account.
 
 ---
 

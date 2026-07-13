@@ -7,9 +7,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
+    "build:ghpages": "vite build --mode ghpages",
+    "postbuild:ghpages": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:ghpages",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

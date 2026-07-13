@@ -41,7 +41,7 @@ export default function Hero() {
 
         <div className="hero__avatar-col fade-up" style={{ animationDelay: '0.3s' }}>
           <div className="hero__avatar">
-            {/* TODO: replace with <img src="/kenneth-lewis.jpg" alt="Kenneth Lewis" /> once photo is supplied */}
+            {/* TODO: replace with <img src={`${import.meta.env.BASE_URL}kenneth-lewis.jpg`} alt="Kenneth Lewis" /> once photo is supplied */}
             <span className="hero__avatar-label">Photo placeholder</span>
           </div>
         </div>

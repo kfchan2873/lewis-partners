@@ -16,7 +16,7 @@ export default function About() {
           className={`about__img-wrap ${imgVisible ? 'fade-up' : ''}`}
         >
           <div className="about__img-placeholder">
-            {/* Replace with: <img src="/kenneth-lewis.jpg" alt="Kenneth Lewis" /> */}
+            {/* Replace with: <img src={`${import.meta.env.BASE_URL}kenneth-lewis.jpg`} alt="Kenneth Lewis" /> */}
             <span className="about__img-initials">KL</span>
             <span className="about__img-hint">Photo to be supplied</span>
           </div>
