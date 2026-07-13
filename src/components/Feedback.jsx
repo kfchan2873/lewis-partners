@@ -1,6 +1,7 @@
 // src/components/Feedback.jsx
 
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import { enquiryTypes, firm } from '../data/siteData'
 import './Feedback.css'
 
@@ -18,6 +19,7 @@ export default function Feedback() {
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
 
   const validate = () => {
     const e = {}
@@ -53,16 +55,39 @@ export default function Feedback() {
     }
 
     setSubmitting(true)
-    setTimeout(() => {
-      setSubmitting(false)
-      setSubmitted(true)
-    }, 1000)
+    setSubmitError(false)
+
+    const templateParams = {
+      first_name: form.firstName,
+      last_name: form.lastName,
+      email: form.email,
+      phone: form.phone || 'Not provided',
+      enquiry_type: form.enquiryType,
+      message: form.message,
+    }
+
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(() => {
+        setSubmitting(false)
+        setSubmitted(true)
+      })
+      .catch(() => {
+        setSubmitting(false)
+        setSubmitError(true)
+      })
   }
 
   const handleReset = () => {
     setForm(INITIAL_FORM)
     setErrors({})
     setSubmitted(false)
+    setSubmitError(false)
   }
 
   return (
@@ -121,7 +146,7 @@ export default function Feedback() {
               <label className="form__label">Your Message</label>
               <textarea
                 name="message"
-                rows={5}
+                rows={8}
                 maxLength={500}
                 value={form.message}
                 onChange={handleChange}
@@ -132,6 +157,12 @@ export default function Feedback() {
                 <span className="form__char-count">{form.message.length} / 500</span>
               </div>
             </div>
+
+            {submitError && (
+              <p className="form__error form__error--submit">
+                Something went wrong sending your enquiry. Please try again, or call us directly at {firm.phone}.
+              </p>
+            )}
 
             <button
               type="submit"

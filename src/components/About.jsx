@@ -50,7 +50,7 @@ export default function About() {
           <span className="section-tag">Meet the Principal</span>
           <h2 className="about__name">{about.name}</h2>
           <p className="about__title-line">{about.title}</p>
-          <p className="about__credentials-line">{about.credentials}</p>
+          <p className="about__credentials-line">{about.credentials.join(' · ')}</p>
 
           {about.bio.map((para, i) => (
             <p key={i} className="about__para">{para}</p>

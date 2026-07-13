@@ -2,17 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { firm, navLinks } from '../data/siteData'
+import NavDropdown from './NavDropdown'
 import './Navbar.css'
 
-export default function Navbar({ onAdminToggle, adminMode }) {
-  const [scrolled, setScrolled] = useState(false)
+export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40)
-
       const sections = navLinks.map(link => link.href.replace('#', ''))
       let current = ''
 
@@ -35,44 +33,41 @@ export default function Navbar({ onAdminToggle, adminMode }) {
   }, [menuOpen])
 
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
-      <a href="#home" className="navbar__logo">
-        {firm.brandPrimary} <span>{firm.brandSecondary}</span>
-      </a>
+    <nav className="navbar">
+      <div className="navbar__inner">
+        <a href="#home" className="navbar__logo">
+          {firm.brandPrimary} <span>{firm.brandSecondary}</span>
+        </a>
 
-      <ul className="navbar__links">
-        {navLinks.map(link => (
-          <li key={link.href}>
-            <a
-              href={link.href}
-              className={activeSection === link.href.slice(1) ? 'active' : ''}
-            >
-              {link.label}
-            </a>
+        <ul className="navbar__links">
+          {navLinks.map(link => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                className={activeSection === link.href.slice(1) ? 'active' : ''}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+
+          <li>
+            <NavDropdown />
           </li>
-        ))}
 
-        <li>
-          <a href="#contact" className="navbar__cta">Get in Touch</a>
-        </li>
+          <li className="navbar__cta-item">
+            <a href="#contact" className="navbar__cta">Get in Touch</a>
+          </li>
+        </ul>
 
-        <li>
-          <button
-            className={`navbar__admin-btn ${adminMode ? 'navbar__admin-btn--active' : ''}`}
-            onClick={onAdminToggle}
-          >
-            {adminMode ? '✕ Exit Admin' : '⚙ Admin'}
-          </button>
-        </li>
-      </ul>
-
-      <button
-        className={`navbar__hamburger ${menuOpen ? 'open' : ''}`}
-        onClick={() => setMenuOpen(o => !o)}
-        aria-label="Toggle menu"
-      >
-        <span /><span /><span />
-      </button>
+        <button
+          className={`navbar__hamburger ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="Toggle menu"
+        >
+          <span /><span /><span />
+        </button>
+      </div>
 
       {menuOpen && (
         <div className="navbar__mobile-menu">
@@ -85,7 +80,8 @@ export default function Navbar({ onAdminToggle, adminMode }) {
               {link.label}
             </a>
           ))}
-          <a href="#contact" onClick={() => setMenuOpen(false)}>Get in Touch</a>
+          <NavDropdown />
+          <a href="#contact" className="navbar__cta" onClick={() => setMenuOpen(false)}>Get in Touch</a>
         </div>
       )}
     </nav>

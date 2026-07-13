@@ -1,6 +1,6 @@
 // src/App.jsx
 
-import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Services from './components/Services'
@@ -9,31 +9,16 @@ import Testimonials from './components/Testimonials'
 import Feedback from './components/Feedback'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import AdminPanel from './components/AdminPanel'
+import AdminGate from './components/AdminGate'
+import useSmoothAnchorScroll from './hooks/useSmoothAnchorScroll'
 import './App.css'
 
-export default function App() {
-  const [adminMode, setAdminMode] = useState(false)
-
-  useEffect(() => {
-    document.body.classList.toggle('admin-active', adminMode)
-  }, [adminMode])
+function HomePage() {
+  useSmoothAnchorScroll()
 
   return (
     <>
-      {adminMode && (
-        <div className="admin-bar">
-          <span>⚙ Admin Mode Active — use the panel (bottom right) to make content changes</span>
-          <button onClick={() => setAdminMode(false)} className="admin-bar__exit">
-            Exit Admin View
-          </button>
-        </div>
-      )}
-
-      <Navbar
-        onAdminToggle={() => setAdminMode(v => !v)}
-        adminMode={adminMode}
-      />
+      <Navbar />
 
       <main id="main-content">
         <section id="home"><Hero /></section>
@@ -45,10 +30,17 @@ export default function App() {
       </main>
 
       <Footer />
-
-      {adminMode && (
-        <AdminPanel onClose={() => setAdminMode(false)} />
-      )}
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/admin" element={<AdminGate />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
