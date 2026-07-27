@@ -20,7 +20,7 @@ export const firm = {
   tagline: 'Trusted accounting for individuals and business.',
   website: 'lewispartners.com.au',
   googleMapsEmbedUrl:
-    'https://www.google.com/maps?q=40+Station+Street+Bayswater+VIC+3153&output=embed',
+    'https://www.google.com/maps?q=Lewis+Partners+Accountants,+Unit+5,+40+Station+Street,+Bayswater+VIC+3153&output=embed',
 
   legalName: 'Lewis Partners Accountants Pty Ltd',
   taxAgentNumber: '24251007',
