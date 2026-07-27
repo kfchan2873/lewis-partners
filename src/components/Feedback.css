@@ -95,6 +95,12 @@
 .form__textarea {
   resize: vertical;
   min-height: 220px;
+  background: #f5f3ec;
+  color: var(--text);
+}
+
+.form__textarea::placeholder {
+  color: var(--muted);
 }
 
 .form__meta {
@@ -145,6 +151,13 @@
 .feedback__submit--loading {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.form__privacy {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(250,248,243,0.78);
+  margin-top: 1rem;
 }
 
 /* Success */
