@@ -8,7 +8,7 @@ export const firm = {
   name: 'Lewis Partners',
   brandPrimary: 'Lewis',
   brandSecondary: 'Partners',
-  phone: '1800 080 833',
+  phone: '1300 080 833',
   email: 'admin@lewispartners.com.au',
   address: {
     street: 'Unit 5, 40 Station Street',

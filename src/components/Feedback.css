@@ -95,12 +95,6 @@
 .form__textarea {
   resize: vertical;
   min-height: 220px;
-  background: #f5f3ec;
-  color: var(--text);
-}
-
-.form__textarea::placeholder {
-  color: var(--muted);
 }
 
 .form__meta {
@@ -156,7 +150,7 @@
 .form__privacy {
   text-align: center;
   font-size: 0.78rem;
-  color: rgba(250,248,243,0.78);
+  color: #ffffff;
   margin-top: 1rem;
 }
 
