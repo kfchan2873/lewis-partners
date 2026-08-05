@@ -9,7 +9,6 @@ import Testimonials from './components/Testimonials'
 import Feedback from './components/Feedback'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import AdminGate from './components/AdminGate'
 import useSmoothAnchorScroll from './hooks/useSmoothAnchorScroll'
 import './App.css'
 
@@ -39,7 +38,6 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<AdminGate />} />
       </Routes>
     </BrowserRouter>
   )

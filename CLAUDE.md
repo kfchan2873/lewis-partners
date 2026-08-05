@@ -19,8 +19,7 @@ only the domain registrant on record with Crazy Domains, a separate matter from 
 public-facing business entity above. See the "Entity clarification" row in §10 for how
 this was confirmed.
 
-**Project type:** Static marketing website — 1 page with anchor-based navigation (SPA feel),
-plus a separate password-gated `/admin` route
+**Project type:** Static marketing website — 1 page with anchor-based navigation (SPA feel)
 **Tech stack:** Vite + React 18 + JSX · Plain CSS (no Tailwind, no CSS-in-JS) · `react-router-dom`
 **Deployment target:** Static files → GitHub Pages (`gh-pages` package, configured and
 deploy-ready), or Vercel/Netlify/Crazy Domains hosting (rewrite configs in place for all
@@ -31,8 +30,6 @@ four — see §12)
 ## 2. Why Vite + React (not plain HTML)
 
 The client needs:
-- A plain-English admin content editing layer (requires React state) — now scoped behind
-  a password-gated `/admin` route rather than exposed in the public nav (see §6)
 - Interactive contact form with validation — now wired to a real send via EmailJS (see §8)
 - Future interactivity: booking widgets, animations, potential client portal
 - Scroll-triggered animations (`useScrollReveal` hook) and eased in-page navigation
@@ -63,8 +60,8 @@ lewis-partners/
 │
 └── src/
     ├── main.jsx                     ← ReactDOM.createRoot entry
-    ├── App.jsx                      ← Router shell: "/" → HomePage, "/admin" → AdminGate
-    ├── App.css                      ← (currently empty — see §5, AdminPanel note)
+    ├── App.jsx                      ← Router shell: "/" → HomePage
+    ├── App.css                      ← currently empty
     ├── index.css                    ← Global CSS variables, resets, utilities
     │
     ├── data/
@@ -83,9 +80,7 @@ lewis-partners/
         ├── Testimonials.jsx / .css  ← Client testimonial cards
         ├── Feedback.jsx / .css      ← Enquiry form — real send via EmailJS — see §8
         ├── Contact.jsx / .css       ← Hours table, Google Maps iframe, contact items
-        ├── Footer.jsx / .css        ← 4-column footer
-        ├── AdminGate.jsx / .css     ← Password gate in front of AdminPanel — see §6
-        └── AdminPanel.jsx / .css    ← Plain-English content editor panel (prototype)
+        └── Footer.jsx / .css        ← 4-column footer
 ```
 
 ---
@@ -173,8 +168,9 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   never wraps mid-transition even if the row is ever squeezed again), and the same CTA is
   duplicated — properly styled as a button, not a plain link — inside the mobile hamburger
   panel (`.navbar__mobile-menu a.navbar__cta`), so it's still reachable below 1200px.
-- **No admin toggle** — the old ⚙ gear icon that toggled an in-page admin overlay has been
-  removed entirely; admin access is now only via the `/admin` route (§6).
+- **No admin toggle** — the old ⚙ gear icon that toggled an in-page admin overlay was
+  removed early on; the `/admin` route it was replaced with has since been removed
+  entirely too (§10) — there is no admin surface of any kind on this site any more.
 
 ### NavDropdown ("Useful Links")
 - Renders `externalLinks` (filtered to `active !== false`) grouped by `category` into a
@@ -187,11 +183,9 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   under 900px): left column has the existing badge/headline/subheading/CTAs/stats, right
   column is a circular photo placeholder for Kenneth.
 - Placeholder: gold circle, `clamp(320px, 26vw, 380px)` on desktop down to
-  `clamp(220px, 50vw, 320px)` on mobile, containing the text **"Photo placeholder"** (DM
-  Sans, small uppercase label style — deliberately *not* initials or a serif treatment, so
-  it can't be mistaken for finished branding). A JSX comment marks exactly where to swap
-  in `<img src="/kenneth-lewis.jpg" alt="Kenneth Lewis" />` once the real photo is
-  supplied.
+  `clamp(220px, 50vw, 320px)` on mobile, containing the text **"Photo placeholder"**. A JSX
+  comment marks exactly where to swap in the real `<img>` once the Hero photo is supplied
+  — still pending, see §10 (About's photo has been added; Hero's has not).
 - Top padding is `calc(var(--navbar-height) + 40px)` so hero content clears the now-opaque
   fixed navbar (this used to be a flat `120px`, which happened to still work after the
   navbar redesign, but was made explicit/derived rather than left as a coincidence).
@@ -212,21 +206,14 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   It was removed because with both cards present, the layout only had room for one at
   narrower widths without them colliding.
 - The IPA card's position is adjusted specifically inside the `@media (max-width: 900px)`
-  block in `About.css` (`top: 0.5rem`, vs. the desktop default `top: 2rem`) — this exists
-  purely to add breathing room between the card and the "Photo to be supplied" hint text
-  below it, which was measured to sit only ~23px away at that breakpoint (now ~47px).
-- **The card intentionally overlaps the photo placeholder area** — it always has, at every
-  width, including full desktop. The large low-opacity "KL" watermark
-  (`.about__img-initials`, `rgba(201,168,76,0.25)`) is a decorative background mark that
-  the white card is deliberately layered on top of (`z-index: 2`). Don't mistake this for a
-  bug to "fix" by eliminating the overlap entirely — the `top: 0.5rem` adjustment above
-  only fixes the card crowding the *hint text line*, not the (intended) overlap with the
-  watermark itself.
-- `about__img-placeholder` shows the "KL" watermark + a "Photo to be supplied" hint (its
-  own, separate placeholder from the Hero one — not yet reworded, since the hint text
-  already makes it unambiguous as a placeholder). Replace with
-  `<img src="/kenneth-lewis.jpg" />` once photo is supplied — same target path Hero.jsx's
-  TODO comment expects.
+  block in `About.css` (`top: 0.5rem`, vs. the desktop default `top: 2rem`) for breathing
+  room at that breakpoint.
+- **The card intentionally overlaps the photo area** — it always has, at every width,
+  including full desktop (`z-index: 2`, above the photo's `z-index: 1`). Don't mistake this
+  for a bug to "fix" by eliminating the overlap entirely.
+- `about__img-placeholder` now renders `about.jsx`'s photo `<img>` (`.about__img-photo`,
+  `object-fit: cover`) instead of the old "KL" watermark + hint text — see §10 (currently a
+  temporary stopgap crop, not the client's final photo).
 - LinkedIn button (real URL now in `siteData.js`) styled to match LinkedIn brand colour
   (#0077b5).
 - Credentials line: `about.credentials` is an **array** of three strings — always render
@@ -273,17 +260,6 @@ The `Contact` component automatically highlights today's row using `new Date()`.
   generate the exact embed URL from Google Maps → Share → Embed a map.
 - `position: sticky` on the map column (desktop only).
 
-### AdminGate + AdminPanel
-- `AdminGate.jsx` is a standalone page rendered at `/admin` (see §6): a password form
-  gates access; on success it renders `AdminPanel` in place.
-- `AdminPanel.jsx` itself is unchanged in behaviour (still a prototype — simulates async
-  processing with a `setTimeout`, shows a change-log queue, includes example instructions)
-  but its CSS was reworked from a `position: fixed` bottom-right floating widget (which
-  made sense when it overlaid the live site) to a normal centered block, since it now
-  owns the entire `/admin` page rather than floating over other content.
-- In production this would POST the instruction to an AI API (e.g. Claude API) which
-  modifies `siteData.js` and triggers a rebuild + deploy — still not built.
-
 ### Footer
 - 4-column: brand/tagline/motto | navigation | Useful Links (mirrors the navbar dropdown,
   same `active`-flag filtering) | contact details.
@@ -294,11 +270,14 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 
 ---
 
-## 6. Routing & Admin Access
+## 6. Routing
 
-Client-side routing was added (`react-router-dom`) specifically to move admin access from
-an in-page toggle (a ⚙ gear icon in the public nav, togglable by any visitor) to a
-separate, password-gated `/admin` route.
+`react-router-dom` is still a dependency and `App.jsx` still wraps the site in a
+`BrowserRouter`, even though the site is back down to a single `/` route — see §10 for why
+(the `/admin` route this was originally built to support has been removed). Left in place
+rather than ripped out, since re-adding a route later (or restoring `basename` handling for
+GitHub Pages) is easier than re-introducing the router from scratch; flag to the client if
+it's worth simplifying away entirely now that nothing depends on it besides `/`.
 
 - **`BrowserRouter`**, not `HashRouter` — this project went through both. `HashRouter` was
   tried first (it needs zero server config on static hosts), but this site's whole nav
@@ -309,27 +288,11 @@ separate, password-gated `/admin` route.
   `BrowserRouter` with `basename={import.meta.env.BASE_URL}`, which only intercepts
   navigation through its own `<Link>`/`navigate()` calls — plain `<a href="#services">`
   tags fall through to normal browser anchor scrolling, untouched by the router.
-- Because `/admin` is only reachable by hard navigation (typed URL, bookmark, refresh —
-  there's no in-app link to it any more), every documented static host needs a rewrite
-  rule so it serves `index.html` for that path instead of 404ing:
-  - **Netlify** — `public/_redirects`
-  - **Crazy Domains / Apache-style hosting** — `public/.htaccess`
-  - **Vercel** — `vercel.json` rewrites
-  - **GitHub Pages** (no rewrite support at all — needs an actual `404.html` file) —
-    `postbuild` npm script copies the built `index.html` to `dist/404.html`
-- **`AdminGate.jsx`** — password-only form (no username). Correct password comes from
-  `import.meta.env.VITE_ADMIN_PASSWORD`, so it isn't hardcoded in committed source. Auth
-  state is plain `useState` — **not** persisted to localStorage/sessionStorage, so it
-  resets on refresh or a new tab, by design.
-- **Not real security.** Any `VITE_...` env var is bundled into the client JS at build
-  time, so the password is readable in plain text by anyone who opens dev tools on the
-  built `dist/` bundle. This is fine for keeping casual visitors out of a prototype, but
-  it is not a real access-control boundary. If `AdminPanel` ever gets wired to a real
-  content-editing backend, replace this with server-side auth before that ships.
-- `.env` (gitignored, holds real values) / `.env.example` (committed, values intentionally
-  blank) — see §8 for the EmailJS variables that live alongside `VITE_ADMIN_PASSWORD` in
-  the same files. **Never put a real value from `.env` into this file or any other
-  committed file** — see the checklist in §11.
+- The SPA-fallback rewrite configs (`public/_redirects`, `public/.htaccess`,
+  `vercel.json`, and the GitHub Pages `postbuild` → `dist/404.html` copy — see §12) exist
+  to serve `index.html` for any client-side route reached by hard navigation. They were
+  written when `/admin` was that route; with only `/` left, they're currently unexercised
+  but harmless to leave in place in case a new route is added.
 
 ---
 
@@ -386,8 +349,8 @@ One-time setup (not doable by an AI assistant — needs an actual EmailJS accoun
 2. Create an email template using the parameter names below.
 3. Copy the Service ID / Template ID / Public Key from the EmailJS dashboard into `.env`.
 
-The EmailJS **Public Key is designed to be client-visible** (safe to expose) — unlike
-`VITE_ADMIN_PASSWORD`, it isn't a secret that needs to stay out of committed files.
+The EmailJS **Public Key is designed to be client-visible** (safe to expose) — it isn't a
+secret that needs to stay out of committed files.
 
 ### Template parameter names
 `Feedback.jsx`'s `handleSubmit` builds this exact object and passes it to `emailjs.send()`
@@ -463,13 +426,13 @@ Footer       → #080e2e           deep navy
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Kenneth's photo | ⏳ Pending | Both `Hero.jsx` and `About.jsx` show clearly-labeled placeholders ("Photo placeholder" / "Photo to be supplied") rather than anything that could pass for real branding. Swap both once the photo is supplied — target path `/kenneth-lewis.jpg` in both. |
+| Kenneth's photo | ⚠️ Split | `About.jsx` renders `public/kenneth-lewis-about.jpg` (via `${import.meta.env.BASE_URL}kenneth-lewis-about.jpg`) — a stopgap crop, not the client's final headshot. `Hero.jsx` still shows the "Photo placeholder" gold-circle placeholder; its `<img>` was deliberately **not** wired up yet — when that photo arrives, use a distinct filename (e.g. `kenneth-lewis-hero.jpg`), matching the `-about`/`-hero` naming convention. |
 | Google Maps embed URL | ⚠️ Approximate | Generate exact URL from Google Maps → Share → Embed |
 | Form submission | ✅ Resolved | Wired to EmailJS (`@emailjs/browser`) — see §8 |
 | LinkedIn URL | ✅ Resolved | Real profile URL set in `siteData.js` |
 | Entity clarification | ✅ Resolved | Public-facing entity is Lewis Partners Accountants Pty Ltd (ABN 98 152 881 274) — confirmed distinct from Yarra Ranges Taxation Services PTY LTD, which is solely the domain registrant on record with Crazy Domains |
 | Domain hosting | 🔧 Broken | Crazy Domains account needs hosting renewed/configured |
-| Admin CMS layer | 🔭 Prototype | `AdminPanel.jsx` is still a UI prototype (no AI API backend), but is no longer exposed via a public nav toggle — it now lives behind a password-gated `/admin` route (§6). The password gate itself is a prototype-level deterrent, not real security. |
+| Admin CMS layer | 🗑️ Removed | The plain-English admin editing prototype (`AdminGate.jsx`, `AdminPanel.jsx`, the `/admin` route in `App.jsx`) has been deleted entirely, not just gated — there is no admin surface, password-protected or otherwise, on this site any more. If a real content-editing layer is wanted later, it should be designed fresh with server-side auth (§6) rather than resurrecting this prototype. |
 | Logo assets | ⏳ Pending | `public/logos/` is empty — "Useful Links" entries reference filenames that don't exist yet on disk (degrades gracefully to text-only) |
 
 ---
@@ -492,18 +455,18 @@ npm run preview
 
 ### Before pushing to a public repo
 `.env` is gitignored and `.env.example` ships with blank values — confirm both stay that
-way. Specifically check that no committed file (including this one) ever contains the
-literal value of `VITE_ADMIN_PASSWORD`. The EmailJS Service ID / Template ID are not
-sensitive on their own, and the EmailJS **Public Key is meant to be client-visible** —
-none of the three need to be secret — but the admin password is the one value in `.env`
-that must never appear in plain text anywhere in the repo.
+way. None of the EmailJS values (Service ID / Template ID / Public Key) are sensitive on
+their own — the **Public Key is meant to be client-visible** — so there's currently no
+value in `.env` that must be kept out of committed files. (This was previously
+`VITE_ADMIN_PASSWORD`, before the admin route it gated was removed — see §10.)
 
 ---
 
 ## 12. Deployment
 
 The `dist/` folder after `npm run build` contains static files only. Rewrite/fallback
-config for client-side routing (`/admin`) is already in place for all four options below.
+config for client-side routing is in place for all four options below (currently
+unexercised now that `/admin` has been removed — see §6/§10 — but left in place).
 
 ### `base` path is mode-dependent — this matters, read before deploying anywhere
 `vite.config.js`'s `base` is **`/` by default**, correct for Vercel, Netlify, and Crazy
@@ -532,10 +495,11 @@ renaming its `postbuild` hook would have silently stopped the 404.html copy from
 Two places read `import.meta.env.BASE_URL` at runtime and adapt automatically to whichever
 mode built them — no per-host changes needed to either: the "Useful Links" logo `<img>` src
 in `NavDropdown.jsx`/`Footer.jsx`, and `App.jsx`'s `<BrowserRouter basename={...}>`. The
-Kenneth-photo `<img>` TODO comments in `Hero.jsx`/`About.jsx` were updated to use the same
-`${import.meta.env.BASE_URL}kenneth-lewis.jpg` pattern (they previously hardcoded
-`/kenneth-lewis.jpg`, which — though only a comment with no runtime effect yet — would have
-been wrong for the GitHub Pages build the moment someone implemented it).
+The Kenneth-photo `<img>` in `About.jsx` (see §10) uses the same
+`${import.meta.env.BASE_URL}kenneth-lewis-about.jpg` pattern rather than a hardcoded
+`/kenneth-lewis-about.jpg`, which would have been wrong for the GitHub Pages build.
+`Hero.jsx`'s photo is still a placeholder (§10) — its TODO comment should use the same
+`BASE_URL` pattern once wired up.
 
 **Option A — GitHub Pages:**
 ```bash
@@ -554,11 +518,12 @@ rewrite matches asset requests too (`/assets/index-xxx.js`, logo `.svg` files, e
 first Vercel deploy served `index.html` back for JS module requests — blank page, "Expected
 a JavaScript-or-Wasm module script but the server responded with a MIME type of
 'text/html'" in the console. The fix excludes any path ending in a file extension from the
-rewrite, so real static files are served as themselves and only actual app routes (`/`,
-`/admin`) fall through to `index.html`. Deliberately excludes by *file extension*, not by
+rewrite, so real static files are served as themselves and only actual app routes (just
+`/` now — see §6/§10) fall through to `index.html`. Deliberately excludes by *file extension*, not by
 hardcoding `assets/` — a folder-name exclusion would still break the still-unimplemented
-Kenneth-photo path (`kenneth-lewis.jpg` lands at the `dist/` root, not under `assets/`,
-`logos/`, or any other excluded folder, the moment someone adds it). Verified with a
+Hero-photo path (`kenneth-lewis-hero.jpg` would land at the `dist/` root, not under
+`assets/`, `logos/`, or any other excluded folder, the moment someone adds it). Verified
+with a
 regex test matrix against the actual `dist/` output and a local server that replicates
 Vercel's static-file-then-rewrite routing — real confirmation on Vercel's actual
 infrastructure after deploy is still the authoritative check, since Vercel's exact
