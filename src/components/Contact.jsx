@@ -38,7 +38,7 @@ export default function Contact() {
   ]
 
   return (
-    <section className="section contact" id="contact">
+    <section className="section contact" id="location">
       <div className="contact__inner">
 
         {/* ---- Left: info + hours ---- */}

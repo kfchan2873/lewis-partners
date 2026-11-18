@@ -91,7 +91,7 @@ export default function Feedback() {
   }
 
   return (
-    <section className="section feedback">
+    <section className="section feedback" id="contact">
       <div className="feedback__inner">
 
         <div className="feedback__header">

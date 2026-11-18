@@ -19,13 +19,15 @@ function HomePage() {
     <>
       <Navbar />
 
+      {/* Each component renders its own <section id="…"> — don't wrap them in
+          another one here, or every anchor id ends up on the page twice. */}
       <main id="main-content">
-        <section id="home"><Hero /></section>
-        <section id="services"><Services /></section>
-        <section id="about"><About /></section>
-        <section id="testimonials"><Testimonials /></section>
-        <section id="contact"><Feedback /></section>
-        <section id="location"><Contact /></section>
+        <Hero />
+        <Services />
+        <About />
+        <Testimonials />
+        <Feedback />
+        <Contact />
       </main>
 
       <Footer />
