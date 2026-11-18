@@ -38,10 +38,29 @@ export const firm = {
 }
 
 /* ===============================
+   SEO / <head>
+   Read at build time by src/seo/headTags.js (via vite.config.js) to
+   generate the <title>, meta/OG tags, JSON-LD, robots.txt and sitemap.xml.
+================================= */
+
+export const seo = {
+  siteUrl: 'https://www.lewispartners.com.au/',
+  // Keep ≤ 60 chars so Google doesn't truncate it.
+  title: 'Your Tax Professionals | Lewis Partners, Bayswater',
+  description:
+    "Lewis Partners Accountants — your tax professionals in Bayswater. Secure Accounting, tax returns, BAS and SMSF for individuals and businesses in Melbourne's east.",
+  locale: 'en_AU',
+  country: 'AU',
+}
+
+/* ===============================
    HERO SECTION
 ================================= */
 
 export const hero = {
+  // Rendered as the page's single <h1> — keep the client's search phrase here.
+  banner: 'Your Tax Professionals',
+
   badge: 'Registered Tax Agent · IPA Member',
 
   headline: [
