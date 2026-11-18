@@ -33,12 +33,20 @@ function HomePage() {
   )
 }
 
+// Shared by the browser (App, below) and the build-time prerender
+// (src/entry-server.jsx), which wraps it in a StaticRouter instead.
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+    </Routes>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   )
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { firm, navLinks, externalLinks } from '../data/siteData'
 import './Footer.css'
 
@@ -5,7 +6,10 @@ const activeLinks = externalLinks.filter(link => link.active)
 const linkCategories = [...new Set(activeLinks.map(link => link.category))]
 
 export default function Footer() {
-  const year = new Date().getFullYear()
+  // Set after mount, not during render: the page is prerendered at build time,
+  // so a render-time year would be baked in and could mismatch on hydration.
+  const [year, setYear] = useState(null)
+  useEffect(() => setYear(new Date().getFullYear()), [])
   return (
     <footer className="footer">
       <div className="footer__inner">
@@ -63,7 +67,7 @@ export default function Footer() {
       </div>
 
       <div className="footer__bottom">
-        <p>© {year} {firm.legalName} · Tax Agent #{firm.taxAgentNumber} · ABN {firm.abn}</p>
+        <p>© {year ? `${year} ` : ''}{firm.legalName} · Tax Agent #{firm.taxAgentNumber} · ABN {firm.abn}</p>
         <div className="footer__bottom-links">
           <a href="#">Privacy Policy</a>
           <a href={`https://www.${firm.website}`}>{firm.website}</a>

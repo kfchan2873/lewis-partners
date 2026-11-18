@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:ghpages": "vite build --mode ghpages",
+    "build": "vite build && node scripts/prerender.js",
+    "build:ghpages": "vite build --mode ghpages && node scripts/prerender.js --mode ghpages",
     "postbuild:ghpages": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "preview": "vite preview",
     "predeploy": "npm run build:ghpages",
