@@ -11,8 +11,7 @@
 **Client:** Lewis Partners Accountants Pty Ltd (ABN 98 152 881 274)
 **Principal:** Kenneth Lewis (IPA, Deakin University graduate, Registered Tax Agent #24251007)
 **Address:** Unit 5, 40 Station Street, Bayswater VIC 3153
-**Phone:** 1300 080 833 — ⚠️ unconfirmed: `siteData.js` has always used 1300, but this file
-originally said 1800. Confirm with Kenneth (see §10); it must match his Google Business Profile.
+**Phone:** 1300 080 833
 **Email:** admin@lewispartners.com.au
 **Domain:** lewispartners.com.au (registered via Crazy Domains / Dreamscape Networks)
 **Registrant entity:** Yarra Ranges Taxation Services PTY LTD (ACN 007 294 279) — this is
@@ -459,7 +458,6 @@ Footer       → #080e2e           deep navy
 | Entity clarification | ✅ Resolved | Public-facing entity is Lewis Partners Accountants Pty Ltd (ABN 98 152 881 274) — confirmed distinct from Yarra Ranges Taxation Services PTY LTD, which is solely the domain registrant on record with Crazy Domains |
 | Domain hosting | 🔧 Broken | Crazy Domains account needs hosting renewed/configured |
 | Admin CMS layer | 🗑️ Removed | The plain-English admin editing prototype (`AdminGate.jsx`, `AdminPanel.jsx`, the `/admin` route in `App.jsx`) has been deleted entirely, not just gated — there is no admin surface, password-protected or otherwise, on this site any more. If a real content-editing layer is wanted later, it should be designed fresh with server-side auth (§6) rather than resurrecting this prototype. |
-| Phone number | ⚠️ TODO | Confirm phone with Kenneth (1300 vs 1800) — must match Google Business Profile. `siteData.js` (and therefore the site + JSON-LD `telephone`) uses **1300 080 833**; this file originally said 1800. |
 | Google Search Console / Business Profile | ⏳ Pending (off-site) | Verify the domain in Search Console and submit `https://www.lewispartners.com.au/sitemap.xml`; add "Your Tax Professionals" to the Google Business Profile description. Needs Kenneth's Google account — not doable from this repo. |
 | Logo assets | ⏳ Pending | `public/logos/` is empty — "Useful Links" entries reference filenames that don't exist yet on disk (degrades gracefully to text-only) |
 
