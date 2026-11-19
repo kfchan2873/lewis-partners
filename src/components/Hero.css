@@ -84,6 +84,27 @@
   max-width: 65%;
 }
 
+/* ---- "Your Tax Professionals" banner (the page's <h1>) ---- */
+.hero__banner {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.hero__banner::after {
+  content: '';
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  margin-top: 0.6rem;
+  background: var(--gold);
+}
+
 .hero__badge {
   display: inline-block;
   border: 1px solid rgba(201,168,76,0.5);
@@ -97,6 +118,8 @@
 }
 
 .hero__headline {
+  /* Was an <h1> (now a <p>) — restate the h1 font so it looks identical. */
+  font-family: var(--font-display);
   font-size: clamp(2.6rem, 5.5vw, 4.2rem);
   color: var(--white);
   margin-bottom: 1.5rem;
@@ -233,6 +256,7 @@
     height: clamp(220px, 50vw, 320px);
   }
   .hero__inner { max-width: 100%; }
+  .hero__banner::after { margin-left: auto; margin-right: auto; }
   .hero__btns { justify-content: center; }
   .hero__stats { justify-content: center; }
 }

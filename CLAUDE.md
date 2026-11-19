@@ -11,7 +11,8 @@
 **Client:** Lewis Partners Accountants Pty Ltd (ABN 98 152 881 274)
 **Principal:** Kenneth Lewis (IPA, Deakin University graduate, Registered Tax Agent #24251007)
 **Address:** Unit 5, 40 Station Street, Bayswater VIC 3153
-**Phone:** 1800 080 833
+**Phone:** 1300 080 833 — ⚠️ unconfirmed: `siteData.js` has always used 1300, but this file
+originally said 1800. Confirm with Kenneth (see §10); it must match his Google Business Profile.
 **Email:** admin@lewispartners.com.au
 **Domain:** lewispartners.com.au (registered via Crazy Domains / Dreamscape Networks)
 **Registrant entity:** Yarra Ranges Taxation Services PTY LTD (ACN 007 294 279) — this is
@@ -46,26 +47,33 @@ site grows. Vite produces static output (`dist/`) identical to plain HTML for ho
 lewis-partners/
 ├── CLAUDE.md                        ← You are here
 ├── README.md                        ← Developer quick-start
-├── index.html                       ← HTML shell / entry point
-├── vite.config.js                   ← Vite config (React plugin, mode-dependent base path — see §12)
+├── index.html                       ← HTML shell; `<!-- seo:head -->` marker filled at build — see §14
+├── vite.config.js                   ← Vite config (React plugin, SEO plugin, mode-dependent base path — see §12/§14)
 ├── vercel.json                      ← Vercel SPA rewrite (app routes only, not static assets — see §12)
-├── package.json                     ← Dependencies + build:ghpages/postbuild:ghpages steps
+├── package.json                     ← Dependencies + build (with prerender), build:ghpages/postbuild:ghpages
+├── scripts/
+│   └── prerender.js                 ← Bakes the rendered page into dist/index.html — see §14
 ├── .env                             ← Local secrets (gitignored) — see §6/§8
 ├── .env.example                     ← Committed template, values intentionally blank
 │
 ├── public/
 │   ├── _redirects                   ← Netlify SPA rewrite
 │   ├── .htaccess                    ← Apache/Crazy Domains SPA rewrite
+│                                       (robots.txt + sitemap.xml are generated at build, not kept here — §14)
 │   └── logos/                       ← Bank/org logos for "Useful Links" — see §7
 │
 └── src/
-    ├── main.jsx                     ← ReactDOM.createRoot entry
-    ├── App.jsx                      ← Router shell: "/" → HomePage
+    ├── main.jsx                     ← hydrateRoot (prerendered build) / createRoot (dev) entry
+    ├── App.jsx                      ← Router shell: "/" → HomePage; exports AppRoutes for the prerender
+    ├── entry-server.jsx             ← Build-time only: StaticRouter + renderToString — see §14
     ├── App.css                      ← currently empty
     ├── index.css                    ← Global CSS variables, resets, utilities
     │
     ├── data/
-    │   └── siteData.js              ← ⭐ SINGLE SOURCE OF TRUTH for all content
+    │   └── siteData.js              ← ⭐ SINGLE SOURCE OF TRUTH for all content (incl. SEO text)
+    │
+    ├── seo/
+    │   └── headTags.js              ← Build-time only: <head> tags, JSON-LD, robots/sitemap from siteData — §14
     │
     ├── hooks/
     │   ├── useScrollReveal.js       ← IntersectionObserver fade-up hook
@@ -74,7 +82,7 @@ lewis-partners/
     └── components/
         ├── Navbar.jsx / .css        ← Fixed nav, always-opaque, mobile menu
         ├── NavDropdown.jsx / .css   ← "Useful Links" dropdown — see §7
-        ├── Hero.jsx / .css          ← Two-column landing: headline+stats / photo placeholder
+        ├── Hero.jsx / .css          ← Two-column landing: banner (h1) + headline + stats / photo placeholder
         ├── Services.jsx / .css      ← 6-card service grid, hover animations
         ├── About.jsx / .css         ← Bio, floating credential cards, LinkedIn link
         ├── Testimonials.jsx / .css  ← Client testimonial cards
@@ -96,7 +104,8 @@ and never hardcode content strings.
 | Export | Purpose |
 |--------|---------|
 | `firm` | Business/legal details — see shape below |
-| `hero` | Hero section: badge, headline array, subheading, CTA labels, stats |
+| `seo` | `siteUrl`, `title` (≤60 chars), `description`, `locale`, `country` — read at build time only (§14) |
+| `hero` | Hero section: `banner` (the page's `<h1>`), badge, headline array, subheading, CTA labels, stats |
 | `services` | Array of `{ icon, title, description }` — drives the services grid |
 | `about` | Kenneth's bio: name, title, credentials array, bio paragraphs array, badges, LinkedIn |
 | `testimonials` | Array of `{ stars, text, name, role, initials }` |
@@ -179,6 +188,12 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 - See §7 for the full data shape and logo-file requirements.
 
 ### Hero
+- **`hero.banner` ("Your Tax Professionals") is the page's single `<h1>`**, rendered first in
+  the left column, above the badge (client request, Nov 2026 — he wants the phrase both
+  visible and searchable on Google). The three-line `hero.headline` below it is a
+  **`<p className="hero__headline">`, not a heading**; `Hero.css` restates
+  `font-family: var(--font-display)` on it so it looks exactly like the old `<h1>`. Don't turn
+  the headline back into an `h1` — there must be only one, and it must be the banner.
 - **Two-column layout** (`grid-template-columns: 1.2fr 1fr`, collapses to one column
   under 900px): left column has the existing badge/headline/subheading/CTAs/stats, right
   column is a circular photo placeholder for Kenneth.
@@ -228,6 +243,8 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 - CTA nudge at bottom links to `#contact`.
 
 ### Feedback (Contact Form)
+- Renders `<section id="contact">` — the target of every "Get in Touch" CTA (Navbar, Hero,
+  Footer) and of the nav "Contact" link and Testimonials' consultation button.
 - Controlled form via `useState(INITIAL_FORM)`.
 - Client-side validation in `validate()` function — returns error object.
 - Errors clear on field change; character counter on message textarea.
@@ -254,7 +271,11 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 ### Contact
 - `contactItems` array built from `firm` data, including the now-object `firm.address`.
 - Trading hours table from `firm.hours` array.
-- `getTodayName()` highlights current day's row automatically.
+- Renders `<section id="location">` (the enquiry form in `Feedback` owns `#contact` — see
+  Feedback above and §14).
+- `getTodayName()` highlights current day's row automatically — **called in a `useEffect`,
+  not during render**, because the page is prerendered at build time (§14): a render-time
+  value would bake the build day into the HTML and mismatch on hydration.
 - Google Maps iframe uses `firm.googleMapsEmbedUrl`.
   **Note:** The embed URL in siteData.js is approximate. For production,
   generate the exact embed URL from Google Maps → Share → Embed a map.
@@ -264,7 +285,9 @@ The `Contact` component automatically highlights today's row using `new Date()`.
 - 4-column: brand/tagline/motto | navigation | Useful Links (mirrors the navbar dropdown,
   same `active`-flag filtering) | contact details.
 - Reads from `firm`, `navLinks`, and `externalLinks`.
-- Dynamically generates copyright year with `new Date().getFullYear()`.
+- Copyright year comes from `new Date().getFullYear()` **in a `useEffect`** (same
+  prerender/hydration reason as Contact's today-highlight); the prerendered HTML just omits
+  the year until hydration.
 - Copyright line: `© {year} {firm.legalName} · Tax Agent #{firm.taxAgentNumber} · ABN {firm.abn}`
   (previously showed a nonexistent `firm.acn`, which always rendered blank).
 
@@ -279,6 +302,9 @@ rather than ripped out, since re-adding a route later (or restoring `basename` h
 GitHub Pages) is easier than re-introducing the router from scratch; flag to the client if
 it's worth simplifying away entirely now that nothing depends on it besides `/`.
 
+- `App.jsx` exports `AppRoutes` (the `<Routes>` tree) separately from the default `App`
+  (which wraps it in `BrowserRouter`), so the build-time prerender can wrap the same routes
+  in a `StaticRouter` instead (§14). Add new routes inside `AppRoutes`.
 - **`BrowserRouter`**, not `HashRouter` — this project went through both. `HashRouter` was
   tried first (it needs zero server config on static hosts), but this site's whole nav
   design relies on the URL hash for in-page anchor scrolling (`#services`, `#about`, …
@@ -433,6 +459,8 @@ Footer       → #080e2e           deep navy
 | Entity clarification | ✅ Resolved | Public-facing entity is Lewis Partners Accountants Pty Ltd (ABN 98 152 881 274) — confirmed distinct from Yarra Ranges Taxation Services PTY LTD, which is solely the domain registrant on record with Crazy Domains |
 | Domain hosting | 🔧 Broken | Crazy Domains account needs hosting renewed/configured |
 | Admin CMS layer | 🗑️ Removed | The plain-English admin editing prototype (`AdminGate.jsx`, `AdminPanel.jsx`, the `/admin` route in `App.jsx`) has been deleted entirely, not just gated — there is no admin surface, password-protected or otherwise, on this site any more. If a real content-editing layer is wanted later, it should be designed fresh with server-side auth (§6) rather than resurrecting this prototype. |
+| Phone number | ⚠️ TODO | Confirm phone with Kenneth (1300 vs 1800) — must match Google Business Profile. `siteData.js` (and therefore the site + JSON-LD `telephone`) uses **1300 080 833**; this file originally said 1800. |
+| Google Search Console / Business Profile | ⏳ Pending (off-site) | Verify the domain in Search Console and submit `https://www.lewispartners.com.au/sitemap.xml`; add "Your Tax Professionals" to the Google Business Profile description. Needs Kenneth's Google account — not doable from this repo. |
 | Logo assets | ⏳ Pending | `public/logos/` is empty — "Useful Links" entries reference filenames that don't exist yet on disk (degrades gracefully to text-only) |
 
 ---
@@ -446,7 +474,7 @@ npm install
 # Development (hot reload at http://localhost:5173)
 npm run dev
 
-# Production build (outputs to dist/, then copies index.html → 404.html for GitHub Pages)
+# Production build (client build + prerender into dist/index.html — see §14)
 npm run build
 
 # Preview production build locally
@@ -500,6 +528,12 @@ The Kenneth-photo `<img>` in `About.jsx` (see §10) uses the same
 `/kenneth-lewis-about.jpg`, which would have been wrong for the GitHub Pages build.
 `Hero.jsx`'s photo is still a placeholder (§10) — its TODO comment should use the same
 `BASE_URL` pattern once wired up.
+
+Both `npm run build` and `npm run build:ghpages` run `scripts/prerender.js` after the client
+build, in the matching mode — see §14. For GitHub Pages this happens *before*
+`postbuild:ghpages` copies `index.html` → `404.html`, so the 404 copy is prerendered too.
+`vercel.json`'s file-extension exclusion already lets `robots.txt` / `sitemap.xml` through
+as real files.
 
 **Option A — GitHub Pages:**
 ```bash
@@ -569,5 +603,57 @@ Set `open: null, close: null` for closed days.
 
 ---
 
-*Last updated: July 2026*
+## 14. SEO & Prerendering
+
+### `<head>` tags — generated, not hand-written
+`index.html` has a `<!-- seo:head -->` marker instead of a hardcoded `<title>`/description.
+A small plugin in `vite.config.js` (`seoPlugin`) replaces it via `transformIndexHtml` with the
+output of `buildHeadTags()` from `src/seo/headTags.js`, in dev and in both build modes:
+`<title>`, meta description, canonical, Open Graph + Twitter tags, and an
+`AccountingService` JSON-LD block. The same plugin emits `robots.txt` and `sitemap.xml` into
+`dist/` (skipped during the SSR prerender build). **Everything comes from `siteData.js`** —
+`seo` for the title/description/URL, `firm` for name, legal name, phone, email, address,
+ABN and hours, `hero.banner` for the `slogan`, `about` for the founder (name, title, LinkedIn). To change SEO text,
+edit `siteData.js`, never `index.html`.
+
+- Title: `seo.title` — "Your Tax Professionals | Lewis Partners, Bayswater" (50 chars). The
+  client's preferred "…| Lewis Partners Accountants, Bayswater" is 62 chars, over the 60-char
+  limit, so "Accountants" was dropped from the title (it stays in the description, JSON-LD
+  `legalName` and on the page). "Secure Accounting" was deliberately removed from the title
+  but kept in the description.
+- Canonical / `og:url` / sitemap always point at `https://www.lewispartners.com.au/`, even in
+  the GitHub Pages build — that copy is a mirror and should defer to the real domain.
+- JSON-LD `telephone` is derived as `+61 ` + `firm.phone` (leading `0` stripped for
+  geographic numbers; 1300/1800 numbers keep all digits).
+- **No `aggregateRating` / `review` markup from the testimonials** — Google treats
+  self-published reviews on a business's own site as review spam and can apply a manual
+  action. Keep the JSON-LD to facts in `siteData.js` only.
+- No `og:image` yet — add one (absolute URL) once a final photo/brand image exists.
+
+### Prerendering
+The client-rendered SPA used to ship an empty `<div id="root"></div>`, so crawlers that don't
+run JS saw no headings or text at all. After `vite build`, `scripts/prerender.js`:
+1. runs a second `vite build --ssr src/entry-server.jsx` (same `--mode`, so `BASE_URL`, asset
+   paths and the router basename match the client build) into `node_modules/.prerender/`,
+2. calls its `render()` — `renderToString` of `AppRoutes` inside a `StaticRouter`,
+3. inserts the HTML into `dist/index.html`'s `<div id="root"></div>` (no surrounding
+   whitespace — stray text nodes inside `#root` break hydration), then deletes the temp dir.
+
+`main.jsx` calls `hydrateRoot` when `#root` already has children (production) and
+`createRoot` otherwise (`npm run dev`, where nothing is prerendered).
+
+**Rules this imposes on components:**
+- **Nothing browser-only or time-dependent during render.** `window`, `document`,
+  `IntersectionObserver`, `localStorage`, `new Date()`, `Math.random()` etc. belong in
+  `useEffect` / event handlers. Render-time values get frozen at build time and cause
+  hydration mismatches (this is why Contact's today-highlight and Footer's year moved into
+  effects). Module-scope code is also executed in Node during the prerender.
+- `useScrollReveal` elements render *without* `.fade-up` in the prerendered HTML, so they're
+  visible to crawlers/no-JS; the animation is applied after hydration as before.
+- Each component owns its own `<section id="…">`; `App.jsx` must not wrap them in another
+  section (it used to, which put every anchor id on the page twice).
+
+---
+
+*Last updated: November 2026*
 *Project managed by: [Your name/agency]*

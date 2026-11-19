@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { firm } from '../data/siteData'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import './Contact.css'
@@ -10,7 +11,10 @@ function getTodayName() {
 export default function Contact() {
   const { ref: leftRef, visible: leftVisible } = useScrollReveal()
   const { ref: rightRef, visible: rightVisible } = useScrollReveal()
-  const today = getTodayName()
+  // Set after mount, not during render: the page is prerendered at build time,
+  // so a render-time value would bake in the build day and mismatch on hydration.
+  const [today, setToday] = useState(null)
+  useEffect(() => setToday(getTodayName()), [])
 
   const contactItems = [
     {
@@ -34,7 +38,7 @@ export default function Contact() {
   ]
 
   return (
-    <section className="section contact" id="contact">
+    <section className="section contact" id="location">
       <div className="contact__inner">
 
         {/* ---- Left: info + hours ---- */}

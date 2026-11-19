@@ -1,4 +1,4 @@
-import { hero, firm } from '../data/siteData'
+import { hero } from '../data/siteData'
 import './Hero.css'
 
 export default function Hero() {
@@ -10,15 +10,21 @@ export default function Hero() {
 
       <div className="hero__grid">
         <div className="hero__inner">
-          <div className="hero__badge fade-up" style={{ animationDelay: '0s' }}>
+          {/* The page's single <h1> — carries the client's search phrase. */}
+          <h1 className="hero__banner fade-up" style={{ animationDelay: '0s' }}>
+            {hero.banner}
+          </h1>
+
+          <div className="hero__badge fade-up" style={{ animationDelay: '0.1s' }}>
             {hero.badge}
           </div>
 
-          <h1 className="hero__headline fade-up" style={{ animationDelay: '0.15s' }}>
+          {/* Visually the headline, but a <p> so the banner above stays the only <h1>. */}
+          <p className="hero__headline fade-up" style={{ animationDelay: '0.15s' }}>
             <em>{hero.headline[0]}</em><br />
             {hero.headline[1]}<br />
             {hero.headline[2]}
-          </h1>
+          </p>
 
           <p className="hero__sub fade-up" style={{ animationDelay: '0.3s' }}>
             {hero.subheading}
