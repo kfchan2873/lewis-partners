@@ -4,7 +4,7 @@
 // Generates everything SEO-related from siteData.js so that file stays the
 // single source of truth: <head> tags, JSON-LD, robots.txt and sitemap.xml.
 
-import { firm, seo, about } from '../data/siteData.js'
+import { firm, seo, about, hero } from '../data/siteData.js'
 
 const escapeHtml = str =>
   String(str)
@@ -34,7 +34,7 @@ export function buildJsonLd() {
     telephone: toInternationalPhone(firm.phone),
     email: firm.email,
     taxID: firm.abn,
-    slogan: firm.tagline,
+    slogan: hero.banner,
     description: seo.description,
     address: {
       '@type': 'PostalAddress',

@@ -613,7 +613,7 @@ output of `buildHeadTags()` from `src/seo/headTags.js`, in dev and in both build
 `AccountingService` JSON-LD block. The same plugin emits `robots.txt` and `sitemap.xml` into
 `dist/` (skipped during the SSR prerender build). **Everything comes from `siteData.js`** —
 `seo` for the title/description/URL, `firm` for name, legal name, phone, email, address,
-ABN, hours and tagline, `about` for the founder (name, title, LinkedIn). To change SEO text,
+ABN and hours, `hero.banner` for the `slogan`, `about` for the founder (name, title, LinkedIn). To change SEO text,
 edit `siteData.js`, never `index.html`.
 
 - Title: `seo.title` — "Your Tax Professionals | Lewis Partners, Bayswater" (50 chars). The

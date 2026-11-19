@@ -70,7 +70,7 @@ export const hero = {
   ],
 
   subheading:
-    'Professional accounting and taxation services for individuals and businesses across Melbourne.',
+    'Local tax professionals in Bayswater, providing accounting and taxation services for individuals and businesses across Melbourne.',
 
   cta: {
     primary: 'Get in Touch',
